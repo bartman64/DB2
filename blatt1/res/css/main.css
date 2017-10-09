@@ -1,0 +1,10 @@
+.vote-field {
+    position: relative;
+    top: 200px;
+    left: 40%;
+}
+
+.vote-field--header {
+    color: blue;
+    font-size: 40px;
+}
