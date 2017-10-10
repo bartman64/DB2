@@ -2,8 +2,8 @@
 -- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Erstellungszeit: 09. Okt 2017 um 18:31
+-- Host: localhost
+-- Erstellungszeit: 10. Okt 2017 um 11:54
 -- Server-Version: 10.1.26-MariaDB
 -- PHP-Version: 7.1.9
 
@@ -34,14 +34,16 @@ CREATE TABLE `vereine` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Indizes der exportierten Tabellen
+-- Daten für Tabelle `vereine`
 --
 
---
--- Indizes für die Tabelle `vereine`
---
-ALTER TABLE `vereine`
-  ADD PRIMARY KEY (`Name`);
+INSERT INTO `vereine` (`Name`, `Stimmen`) VALUES
+  ('FC Bayern', 0),
+  ('FC Augsburg', 0),
+  ('Schalke 04', 0),
+  ('Borussia Dortmund', 0),
+  ('Dynamo Dresden', 0),
+  ('TSV 1860 München', 0);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
