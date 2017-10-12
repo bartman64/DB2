@@ -5,11 +5,10 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-
-
 ?>
 <html>
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="../res/css/main.css">
 </head>
 <body>
@@ -19,11 +18,12 @@ if (!$conn) {
         <select>
             <?php
             $query = "SELECT Name FROM vereine;";
+            mysqli_query($conn, "SET NAMES 'utf8'");
             $result = mysqli_query($conn, $query)
             or die ("Query failed!");
             while ($row = mysqli_fetch_row($result)) {
                 for ($i = 0; $i < mysqli_num_fields($result); $i++) {
-                    echo "<option value=''>$row[$i]</option>";
+                    echo "<option value='$row[$i]'>$row[$i]</option>";
                     echo "<BR>";
                 }
             }
