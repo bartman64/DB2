@@ -4,7 +4,18 @@
     left: 40%;
 }
 
-.vote-field--header {
+.vote-field__header {
     color: blue;
     font-size: 40px;
 }
+
+.vote-field__col {
+    position: relative;
+    display: inline-block;
+    padding-right: 5px;
+}
+
+.vote-field__col--desc {
+
+}
+
