@@ -15,7 +15,15 @@
     padding-right: 5px;
 }
 
-.vote-field__col--desc {
+.button {
+    padding: 5px;
+    border: 1px solid black;
+    text-align: center;
+    width: 150px;
+    cursor: pointer;
+}
 
+.result-table {
+    display: none;
 }
 

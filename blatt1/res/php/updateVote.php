@@ -29,7 +29,7 @@ if ($existingClubs !== $existingClubs_default && $newClub === $newClub_default) 
     }
 
 } else if ($existingClubs === $existingClubs_default && $newClub !== $newClub_default) {
-    $noDuplicate = true;
+    $isDuplicate = false;
 
     //Get existing Vereine Namen
     $query = "SELECT Name FROM vereine;";
@@ -41,17 +41,17 @@ if ($existingClubs !== $existingClubs_default && $newClub === $newClub_default) 
     };
 
     while ($row = mysqli_fetch_row($result)) {
-        if (!$noDuplicate) {
+        if ($isDuplicate) {
             break;
         }
         if (strcasecmp($row[0], $newClub) === 0) {
-            $noDuplicate = false;
+            $isDuplicate = false;
             $queryResult = 'Bitte keine Vereine doppelt eintragen!';
             mysqli_close($conn);
         }
     }
 
-    if ($noDuplicate) {
+    if (!$isDuplicate) {
         mysqli_free_result($result);
 
         $insertQuery = "INSERT INTO vereine (`Name`, Stimmen)
@@ -75,6 +75,7 @@ if ($existingClubs !== $existingClubs_default && $newClub === $newClub_default) 
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script src="../js/button.js"></script>
 </head>
 <body>
 <div>
@@ -100,6 +101,7 @@ if ($existingClubs !== $existingClubs_default && $newClub === $newClub_default) 
     }
     ?>
     <a href="../../public/index.php">Zurück zur Vereins Auswahl!</a>
+    <div class="button" onclick="toggleTable()" action="toggleTable">Ergebnisse anzeigen!</div>
     <?php
     if ($querySuccess) {
         $tableQuery = "SELECT Name, Stimmen FROM vereine";
@@ -110,7 +112,7 @@ if ($existingClubs !== $existingClubs_default && $newClub === $newClub_default) 
         if (!$tableResult) {
             echo 'Error receiving record: ' . mysqli_errno($conn);
         } else {
-            echo '<table border="1">';
+            echo '<table class="result-table" border="1" id = "table">';
             echo '<tr>';
             echo '<th>Verein</th>';
             echo '<th>Abstimmungsteilnehmer</th>';
