@@ -120,7 +120,7 @@ if ($existingClubs !== $existingClubs_default && $newClub === $newClub_default) 
                 for($i = 0; $i <  mysqli_num_fields($tableResult); $i++){
                     echo "<td>$row[$i]</td>";
                 }
-                $percentage = number_format($row[1] / $sumVotes, 2, '.', ' ');
+                $percentage = number_format(($row[1] / $sumVotes) * 100, 2, '.', ' ');
                 echo "<td>$percentage%</td>";
                 echo '</tr>';
             }
