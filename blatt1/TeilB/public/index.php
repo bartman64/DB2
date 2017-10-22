@@ -9,10 +9,10 @@
 <body>
 <form action="../res/php/subscribe.php" method="post">
     Name:<br>
-    <input type="text" name="name" value="Max" required onfocus=" if (this.value === 'Max') this.value = '';"/>
+    <input type="text" name="name" value="" required placeholder="Enter your name"/>
     <br>
     Email:<br>
-    <input type="text" name="email" required value="muster@email.com" onfocus=" if (this.value === 'muster@email.com') this.value = '';"/>
+    <input type="email" name="email" placeholder="Enter your email">
     <br><br>
     <input type="checkbox" name="VereinMitglied" value="Mitglied">
     Bin Mitglied in einem Fußballverein
@@ -37,7 +37,7 @@
     Deutsche Nationalmannschaft
     <br>
     <br>
-    <input type="submit" value="Submit">
+    <input type="submit" value="Subscribe">
 </form>
 </body>
 </html>

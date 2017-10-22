@@ -15,7 +15,8 @@ $mailinglist = array(
 );
 $name;
 $email;
-$vereinMitglied;
+$querySuccess = 0;
+$vereinMitglied = 0;
 
 
 if (isset($_POST['mailinglist'])) {
@@ -24,6 +25,8 @@ if (isset($_POST['mailinglist'])) {
         for ($j = 0; $j < sizeof($tmp); $j++) {
             if ($key == $tmp[$j]) {
                 $mailinglist[$key] = true;
+            } else {
+                $mailinglist[$key] = 0;
             }
         }
     }
@@ -36,23 +39,36 @@ if (isset($_POST['name'])) {
 if (isset($_POST['email'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
 }
-
 if (isset($_POST['VereinMitglied'])) {
-    $vereinMitglied = mysqli_real_escape_string($conn, $_POST['VereinMitglied']);
+    $vereinMitglied = true;
 }
 
-$query = "INSERT INTO `MailingList`(`Email`, `Name`, `VereinMitglied`, `1Liga`, `2Liga`, `3Liga`, `RegionalligaBayern`, `WM2018`, `Nationalmannschaft`)
+if (isset($_POST['mailinglist']) && isset($_POST['name']) && isset($_POST['email'])) {
+
+    $query = "INSERT INTO MailingList(`Email`, `Name`, `VereinMitglied`, `1Liga`, `2Liga`, `3Liga`, `RegionalligaBayern`, `WM2018`, `Nationalmannschaft`)
 VALUES (
 '$email',
 '$name',
-'$vereinMitglied',
-" . $mailinglist['1Liga'] .",
-" . $mailinglist['2Liga'] .",
-" . $mailinglist['3Liga'] .",
-" . $mailinglist['Regionalliga'] .",
-" . $mailinglist['WM'] .",
-" . $mailinglist['Nationalmannschaft'] .")";
-foreach ($mailinglist as $key => $value) {
-    if($value)
-    echo $key . " ";
+$vereinMitglied,
+" . $mailinglist['1Liga'] . ",
+" . $mailinglist['2Liga'] . ",
+" . $mailinglist['3Liga'] . ",
+" . $mailinglist['Regionalliga'] . ",
+" . $mailinglist['WM'] . ",
+" . $mailinglist['Nationalmannschaft'] . ")";
+    mysqli_query($conn, "SET Name 'utf8'");
+
+
+    if (mysqli_query($conn, $query)) {
+        $queryResult = 'Record updated successfully';
+        $querySuccess = true;
+    } else {
+        $queryResult = 'Error updating record: ' . mysqli_error($conn);
+        echo $queryResult;
+    }
+    mysqli_close($conn);
+
+    if ($querySuccess) {
+        echo "Successfull subscribed";
+    }
 }
