@@ -3,6 +3,7 @@ body {
     background-color: lightgreen;
 
 }
+
 input[type=text], select {
     width: 20%;
     padding: 12px 20px;
@@ -45,11 +46,13 @@ input[type=submit] {
 input[type=submit]:hover {
     background-color: rgb(169, 169, 169);
 }
+
 .list-email {
-    font-family: Verdana;
+    font-family: Verdana, serif;
     text-align: center;
 
 }
+
 h1 {
     color: white;
     text-align: center;

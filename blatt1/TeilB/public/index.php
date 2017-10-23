@@ -1,5 +1,9 @@
 <?php
+$conn = mysqli_connect("localhost", "root", "", "uebung1");
 
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
 ?>
 
 <html>
@@ -23,23 +27,20 @@
         <br>
         <br>
     <div class="list-email">
-        <input type="checkbox" name="mailinglist[]" value="1Liga">
-        1. Liga
-        <br>
-        <input type="checkbox" name="mailinglist[]" value="2Liga">
-        2. Liga
-        <br>
-        <input type="checkbox" name="mailinglist[]" value="3Liga">
-        3. Liga
-        <br>
-        <input type="checkbox" name="mailinglist[]" value="Regionalliga">
-        Regionalliga Bayern
-        <br>
-        <input type="checkbox" name="mailinglist[]" value="WM">
-        WM 2018
-        <br>
-        <input type="checkbox" name="mailinglist[]" value="Nationalmannschaft">
-        Deutsche Nationalmannschaft
+        <?php
+        $query = "SELECT Name FROM Newsletter;";
+        mysqli_query($conn, "SET NAMES 'utf8'");
+        $result = mysqli_query($conn, $query)
+        or die ("Query failed!");
+        while ($row = mysqli_fetch_row($result)) {
+            for ($i = 0; $i < mysqli_num_fields($result); $i++) {
+                echo ' <input type="checkbox" name="mailinglist[]" value="' . $row[$i] . '"> ';
+                echo "$row[$i]";
+                echo "<BR>";
+            }
+        }
+        mysqli_free_result($result);
+        ?>
     </div>
     </p>
     <div>

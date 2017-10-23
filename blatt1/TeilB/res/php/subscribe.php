@@ -4,15 +4,18 @@ $conn = mysqli_connect("localhost", "root", "", "uebung1");
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
+$mailinglist;
+$query = "SELECT Name FROM Newsletter;";
+mysqli_query($conn, "SET NAMES 'utf8'");
+$result = mysqli_query($conn, $query)
+or die ("Query failed!");
+while ($row = mysqli_fetch_row($result)) {
+    for ($i = 0; $i < mysqli_num_fields($result); $i++) {
+        $mailinglist[$row[$i]] = 0;
+    }
+}
+mysqli_free_result($result);
 
-$mailinglist = array(
-    "1Liga" => false,
-    "2Liga" => false,
-    "3Liga" => false,
-    "Regionalliga" => false,
-    "WM" => false,
-    "Nationalmannschaft" => false,
-);
 $name;
 $email;
 $querySuccess = 0;
@@ -25,8 +28,6 @@ if (isset($_POST['mailinglist'])) {
         for ($j = 0; $j < sizeof($tmp); $j++) {
             if ($key == $tmp[$j]) {
                 $mailinglist[$key] = true;
-            } else {
-                $mailinglist[$key] = 0;
             }
         }
     }
@@ -45,26 +46,44 @@ if (isset($_POST['VereinMitglied'])) {
 
 if (isset($_POST['mailinglist']) && isset($_POST['name']) && isset($_POST['email'])) {
 
-    $query = "INSERT INTO MailingList(`Email`, `Name`, `VereinMitglied`, `1Liga`, `2Liga`, `3Liga`, `RegionalligaBayern`, `WM2018`, `Nationalmannschaft`)
-VALUES (
-'$email',
-'$name',
-$vereinMitglied,
-" . $mailinglist['1Liga'] . ",
-" . $mailinglist['2Liga'] . ",
-" . $mailinglist['3Liga'] . ",
-" . $mailinglist['Regionalliga'] . ",
-" . $mailinglist['WM'] . ",
-" . $mailinglist['Nationalmannschaft'] . ")";
     mysqli_query($conn, "SET Name 'utf8'");
-
-
-    if (mysqli_query($conn, $query)) {
+    $query_user = "INSERT INTO `User` (Email, Name, VereinsMitglied) VALUES ('$email', '$name', $vereinMitglied)";
+    $query_current_keys = "SELECT Email, Name FROM User;";
+    $result = mysqli_query($conn, $query_current_keys)
+    or die ("Query failed!");
+    while ($row = mysqli_fetch_row($result)) {
+        for ($i = 0; $i < mysqli_num_fields($result); $i++) {
+            if ($row[$i] == $email) {
+                if ($row[++$i] == $name) {
+                    $query_user = "UPDATE User SET VereinsMitglied = $vereinMitglied";
+                }
+            }
+        }
+    }
+    if (mysqli_query($conn, $query_user)) {
         $queryResult = 'Record updated successfully';
         $querySuccess = true;
     } else {
         $queryResult = 'Error updating record: ' . mysqli_error($conn);
         echo $queryResult;
+    }
+    mysqli_free_result($result);
+
+
+    foreach ($mailinglist as $key => $value) {
+        for ($j = 0; $j < sizeof($tmp); $j++) {
+            if ($value) {
+                $query = "INSERT INTO Subscribed (Email, Newsletter) VALUES ('$email', '$key')";
+                echo $query;
+                if (mysqli_query($conn, $query)) {
+                    $queryResult = 'Record updated successfully';
+                    $querySuccess = true;
+                } else {
+                    $queryResult = 'Error updating record: ' . mysqli_error($conn);
+                    echo $queryResult;
+                }
+            }
+        }
     }
     mysqli_close($conn);
 
