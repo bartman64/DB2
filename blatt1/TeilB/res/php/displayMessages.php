@@ -8,14 +8,14 @@ if (!$conn) {
 $emailList = '';
 $club = '';
 
-if(isset($_POST['Subject']) && isset($_POST['Message'])){
+if (isset($_POST['Subject']) && isset($_POST['Message'])) {
     $subject = mysqli_real_escape_string($conn, $_POST['Subject']);
     $message = htmlspecialchars($_POST['Message']);
-    $club = mysqli_real_escape_string($conn,$_POST['Mailingliste']);
-    $subsQuery = "SELECT Email FROM subscribed WHERE Newsletter = '" . $club . "'";
+    $club = mysqli_real_escape_string($conn, $_POST['Mailingliste']);
+    $subsQuery = "SELECT subscribed.Email, `user`.Name FROM subscribed, `user` WHERE subscribed.Email = `user`.Email AND subscribed.Newsletter = '" . $club . "'";
 
-    if(isset($_POST['subs'])){
-        $subsQuery = "SELECT Email FROM subcribed, `user` WHERE subscribed.Newsletter = '" . $club . "' AND `user`.VereinsMitglied = 1";
+    if (isset($_POST['subs'])) {
+        $subsQuery = "SELECT subscribed.Email , `user`.Name FROM subscribed, `user` WHERE subscribed.Email = `user`.Email AND subscribed.Newsletter = '" . $club . "' AND `user`.VereinsMitglied = 1";
     }
 
     $emailList = mysqli_query($conn, $subsQuery);
@@ -35,19 +35,19 @@ if(isset($_POST['Subject']) && isset($_POST['Message'])){
 </head>
 <body>
 <?php
-    if($emailList->num_rows !== 0){
-        while ($row = mysqli_fetch_row($emailList)){
-            for($i = 0; $i < mysqli_num_fields($emailList); $i++){
-                echo '<div class="email">';
-                echo '<div class="email__element"> Mail to: ' . $row[$i] . '</div>';
-                echo '<div class="email__element">Subject: ' . $subject . '</div>';
-                echo '<div class="email__element">Message: <span class="email__text">' . $message . '</span></div>';
-                echo '</div>';
-            }
-        }
-    } else {
-        echo "<p>Für den Vereien: " .$club . " gibt es keine aktiven Subscriptions!</p>";
+if ($emailList->num_rows !== 0) {
+    while ($row = mysqli_fetch_row($emailList)) {
+        $messagePrefix = "Dear ". $row[1] . ",<br> Here is a new Message from your Subscription to " . $club . ".<br>";
+        echo '<div class="email">';
+        echo '<div class="email__element"> Mail to: ' . $row[0] . '</div>';
+        echo '<div class="email__element">Subject: ' . $subject . '</div>';
+        echo '<div class="email__element">Message: <span class="email__text">' . $messagePrefix . $message . '</span></div>';
+        echo '</div>';
+        $messagePrefix = " ";
     }
+} else {
+    echo "<p>Für den Vereien: " . $club . " gibt es keine aktiven Subscriptions!</p>";
+}
 ?>
 </body>
 </html>
