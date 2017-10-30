@@ -1,4 +1,9 @@
 <?php
+$conn = mysqli_connect("localhost", "root", "", "uebung1");
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
 
 ?>
 
@@ -9,14 +14,21 @@
     <link rel="stylesheet" type="text/css" href="../res/css/main.css">
 </head>
 <body>
-<form action="../res/php/displayMessages.php">
+<form action="../res/php/displayMessages.php" method="post">
     <select name="Mailingliste">
-        <option value="1Liga">1.Liga</option>
-        <option value="2Liga">2.Liga</option>
-        <option value="3Liga">3.Liga</option>
-        <option value="RegionalligaBayern">Regionalliga Bayern</option>
-        <option value="WM2018">WM 2018</option>
-        <option value="DeutscheNationalmanschaft">Deutsche Nationalmanschaft</option>
+        <?php
+        $query = "SELECT Name FROM newsletter;";
+        mysqli_query($conn, "SET NAMES 'utf8'");
+        $result = mysqli_query($conn, $query)
+        or die ("Query failed!");
+        while ($row = mysqli_fetch_row($result)) {
+            for ($i = 0; $i < mysqli_num_fields($result); $i++) {
+                echo ' <option value="' . $row[$i] . '">'. $row[$i] .'</option>';
+                echo "<BR>";
+            }
+        }
+        mysqli_free_result($result);
+        ?>
     </select>
     <br>
     <br>

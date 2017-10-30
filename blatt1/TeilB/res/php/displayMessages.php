@@ -6,18 +6,19 @@ if (!$conn) {
 }
 
 $emailList = '';
+$club = '';
 
 if(isset($_POST['Subject']) && isset($_POST['Message'])){
-    $subject = mysqli_real_escape_string($_POST['Subject']);
+    $subject = mysqli_real_escape_string($conn, $_POST['Subject']);
     $message = htmlspecialchars($_POST['Message']);
-    $club = $_POST['Mailingliste'];
-    $subsQuery = "SELECT Email FROM mailinglist WHERE" . $club . "=1";
+    $club = mysqli_real_escape_string($conn,$_POST['Mailingliste']);
+    $subsQuery = "SELECT Email FROM subscribed WHERE Newsletter = '" . $club . "'";
 
     if(isset($_POST['subs'])){
-        $subsQuery = "SELECT Email FROM mailinglist WHERE " . $club . " = 1 AND VereinMitglied = 1";
+        $subsQuery = "SELECT Email FROM subcribed, `user` WHERE subscribed.Newsletter = '" . $club . "' AND `user`.VereinsMitglied = 1";
     }
 
-    $emailList = mysqli_query($conn, $query);
+    $emailList = mysqli_query($conn, $subsQuery);
 
     if ($emailList) {
         echo 'Received record successfully!';
@@ -30,21 +31,22 @@ if(isset($_POST['Subject']) && isset($_POST['Message'])){
 <head>
     <meta charset="UTF-8">
     <title>Send Messages</title>
-    <link rel="stylesheet" type="text/css" href="../res/css/main.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/main.css">
 </head>
 <body>
 <?php
-    if($emailList !== ''){
+    if($emailList->num_rows !== 0){
         while ($row = mysqli_fetch_row($emailList)){
-            for($i = 0; $i < mysqli_num_fields($row); $i++){
-                echo '<div>';
-                echo '<span class="receiver"> Mail to: ' . $row[$i] . '</span>';
-                echo '<span class="subject">Subject: ' . $subject . '</span>';
-                echo '<span class="message">Message: ' . $message . '</span>';
+            for($i = 0; $i < mysqli_num_fields($emailList); $i++){
+                echo '<div class="email">';
+                echo '<div class="email__element"> Mail to: ' . $row[$i] . '</div>';
+                echo '<div class="email__element">Subject: ' . $subject . '</div>';
+                echo '<div class="email__element">Message: <span class="email__text">' . $message . '</span></div>';
+                echo '</div>';
             }
         }
     } else {
-        echo "<p>Error while processing request!</p>";
+        echo "<p>Für den Vereien: " .$club . " gibt es keine aktiven Subscriptions!</p>";
     }
 ?>
 </body>

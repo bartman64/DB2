@@ -62,3 +62,24 @@ h1 {
 div {
     text-align: center;
 }
+
+.email {
+    position: relative;
+    margin-bottom: 10px;
+    width: 300px;
+    left: 40%;
+    border: 1px black solid;
+}
+
+.email__element {
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.email__text {
+    background-color: white;
+    font-size: 14px;
+    text-align: left;
+    display: block;
+    padding: 2px;
+}
