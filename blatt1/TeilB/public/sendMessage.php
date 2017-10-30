@@ -17,7 +17,7 @@ if (!$conn) {
 <form action="../res/php/displayMessages.php" method="post">
     <select name="Mailingliste">
         <?php
-        $query = "SELECT Name FROM newsletter;";
+        $query = "SELECT Name FROM Newsletter;";
         mysqli_query($conn, "SET NAMES 'utf8'");
         $result = mysqli_query($conn, $query)
         or die ("Query failed!");

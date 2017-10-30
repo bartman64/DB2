@@ -12,10 +12,10 @@ if (isset($_POST['Subject']) && isset($_POST['Message'])) {
     $subject = mysqli_real_escape_string($conn, $_POST['Subject']);
     $message = htmlspecialchars($_POST['Message']);
     $club = mysqli_real_escape_string($conn, $_POST['Mailingliste']);
-    $subsQuery = "SELECT subscribed.Email, `user`.Name FROM subscribed, `user` WHERE subscribed.Email = `user`.Email AND subscribed.Newsletter = '" . $club . "'";
+    $subsQuery = "SELECT Subscribed.Email, `User`.Name FROM Subscribed, `User` WHERE Subscribed.Email = `User`.Email AND Subscribed.Newsletter = '" . $club . "'";
 
     if (isset($_POST['subs'])) {
-        $subsQuery = "SELECT subscribed.Email , `user`.Name FROM subscribed, `user` WHERE subscribed.Email = `user`.Email AND subscribed.Newsletter = '" . $club . "' AND `user`.VereinsMitglied = 1";
+        $subsQuery = "SELECT Subscribed.Email , `User`.Name FROM Subscribed, `User` WHERE Subscribed.Email = `User`.Email AND Subscribed.Newsletter = '" . $club . "' AND `User`.VereinsMitglied = 1";
     }
 
     $emailList = mysqli_query($conn, $subsQuery);
