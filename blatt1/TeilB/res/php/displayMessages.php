@@ -37,7 +37,7 @@ if (isset($_POST['Subject']) && isset($_POST['Message'])) {
 <?php
 if ($emailList->num_rows !== 0) {
     while ($row = mysqli_fetch_row($emailList)) {
-        $messagePrefix = "Dear ". $row[1] . ",<br> Here is a new Message from your Subscription to " . $club . ".<br>";
+        $messagePrefix = "Dear " . $row[1] . ",<br> Here is a new Message from your Subscription to " . $club . ".<br>";
         echo '<div class="email">';
         echo '<div class="email__element"> Mail to: ' . $row[0] . '</div>';
         echo '<div class="email__element">Subject: ' . $subject . '</div>';
