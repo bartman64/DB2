@@ -20,7 +20,7 @@ if (!$conn) {
         <input type="text" name="name" value="" required placeholder="Enter your name"/>
         <br>
         Email:
-        <input type="email" name="email" placeholder="Enter your email">
+        <input type="email" name="email" required placeholder="Enter your email">
         <br><br>
         <input type="checkbox" name="VereinMitglied" value="Mitglied">
         Bin Mitglied in einem Fußballverein

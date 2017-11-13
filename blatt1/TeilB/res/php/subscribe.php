@@ -44,7 +44,7 @@ if (isset($_POST['VereinMitglied'])) {
     $vereinMitglied = true;
 }
 
-if (isset($_POST['mailinglist']) && isset($_POST['name']) && isset($_POST['email'])) {
+if (isset($_POST['name']) && isset($_POST['email'])) {
 
     mysqli_query($conn, "SET Name 'utf8'");
     $query_user = "INSERT INTO `User` (Email, Name, VereinsMitglied) VALUES ('$email', '$name', $vereinMitglied)";
@@ -56,8 +56,13 @@ if (isset($_POST['mailinglist']) && isset($_POST['name']) && isset($_POST['email
             if ($row[$i] == $email) {
                 if ($row[++$i] == $name) {
                     $query_user = "UPDATE User SET VereinsMitglied = $vereinMitglied";
+                } else {
+                    echo "This email is already registered with a different name";
+                    $querySuccess = 0;
                 }
+
             }
+
         }
     }
     if (mysqli_query($conn, $query_user)) {
@@ -69,18 +74,19 @@ if (isset($_POST['mailinglist']) && isset($_POST['name']) && isset($_POST['email
     }
     mysqli_free_result($result);
 
-
-    foreach ($mailinglist as $key => $value) {
-        for ($j = 0; $j < sizeof($tmp); $j++) {
-            if ($value) {
-                $query = "INSERT INTO Subscribed (Email, Newsletter) VALUES ('$email', '$key')";
-                echo $query;
-                if (mysqli_query($conn, $query)) {
-                    $queryResult = 'Record updated successfully';
-                    $querySuccess = true;
-                } else {
-                    $queryResult = 'Error updating record: ' . mysqli_error($conn);
-                    echo $queryResult;
+    if (isset($_POST['mailinglist'])) {
+        foreach ($mailinglist as $key => $value) {
+            for ($j = 0; $j < sizeof($tmp); $j++) {
+                if ($value) {
+                    $query = "INSERT INTO Subscribed (Email, Newsletter) VALUES ('$email', '$key')";
+                    echo $query;
+                    if (mysqli_query($conn, $query)) {
+                        $queryResult = 'Record updated successfully';
+                        $querySuccess = true;
+                    } else {
+                        $queryResult = 'Error updating record: ' . mysqli_error($conn);
+                        echo $queryResult;
+                    }
                 }
             }
         }
