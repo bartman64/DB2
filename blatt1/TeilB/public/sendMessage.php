@@ -15,7 +15,7 @@ if (!$conn) {
 </head>
 <body>
 <form action="../res/php/displayMessages.php" method="post">
-    <select name="Mailingliste">
+
         <?php
         $query = "SELECT Name FROM Newsletter;";
         mysqli_query($conn, "SET NAMES 'utf8'");
@@ -23,17 +23,23 @@ if (!$conn) {
         or die ("Query failed!");
         while ($row = mysqli_fetch_row($result)) {
             for ($i = 0; $i < mysqli_num_fields($result); $i++) {
-                echo ' <option value="' . $row[$i] . '">'. $row[$i] .'</option>';
+                echo ' <input type="checkbox" name="newsletter[]" value="' . $row[$i] . '"> ';
+                echo "$row[$i]";
                 echo "<BR>";
             }
         }
         mysqli_free_result($result);
         ?>
+
+    <br>
+    <br>
+    Mitteilung senden an:
+    <select name="receivers">
+        <option value="alle">Alle</option>
+        <option value="Vereinsmitglied">Vereinsmitglieder</option>
+        <option value="nicht Vereinsmitglied">nicht Vereinsmitlgieder</option>
     </select>
-    <br>
-    <br>
-    <input type="checkbox" name="subs" value="subsOnly">
-    Mitteilung nur an Mitglieder des Vereins senden!
+
     <br>
     <br>
     <input type="text" name="Subject" placeholder="Subject" value="">

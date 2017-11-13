@@ -6,18 +6,24 @@ if (!$conn) {
 }
 
 $emailList = '';
-$club = '';
+$newsletter = '';
 
 if (isset($_POST['Subject']) && isset($_POST['Message'])) {
     $subject = mysqli_real_escape_string($conn, $_POST['Subject']);
     $message = htmlspecialchars($_POST['Message']);
-    $club = mysqli_real_escape_string($conn, $_POST['Mailingliste']);
-    $subsQuery = "SELECT Subscribed.Email, `User`.Name FROM Subscribed, `User` WHERE Subscribed.Email = `User`.Email AND Subscribed.Newsletter = '" . $club . "'";
+    $newsletter =$_POST['newsletter'];
+    $receivers = $_POST['receivers'];
+    $comma_seperated_list = "'".implode("',' ", $newsletter)."'";
+    $subsQuery = "SELECT Subscribed.Email, `User`.Name FROM Subscribed, `User` WHERE Subscribed.Email = `User`.Email AND Subscribed.Newsletter IN ( $comma_seperated_list)";
 
-    if (isset($_POST['subs'])) {
-        $subsQuery = "SELECT Subscribed.Email , `User`.Name FROM Subscribed, `User` WHERE Subscribed.Email = `User`.Email AND Subscribed.Newsletter = '" . $club . "' AND `User`.VereinsMitglied = 1";
+    if ($receivers =='Vereinsmitglied') {
+        $subsQuery = "SELECT Subscribed.Email , `User`.Name FROM Subscribed, `User` WHERE Subscribed.Email = `User`.Email AND Subscribed.Newsletter  IN ( $comma_seperated_list) AND `User`.VereinsMitglied = 1";
     }
-
+    if ($receivers =='nicht Vereinsmitglied') {
+        $subsQuery = "SELECT Subscribed.Email , `User`.Name FROM Subscribed, `User` WHERE Subscribed.Email = `User`.Email AND Subscribed.Newsletter  IN ( $comma_seperated_list )  AND `User`.VereinsMitglied != 1";
+    }
+    echo $receivers;
+    echo $subsQuery;
     $emailList = mysqli_query($conn, $subsQuery);
 
     if ($emailList) {
@@ -37,7 +43,7 @@ if (isset($_POST['Subject']) && isset($_POST['Message'])) {
 <?php
 if ($emailList->num_rows !== 0) {
     while ($row = mysqli_fetch_row($emailList)) {
-        $messagePrefix = "Dear " . $row[1] . ",<br> Here is a new Message from your Subscription to " . $club . ".<br>";
+        $messagePrefix = "Dear " . $row[1] . ",<br> Here is a new Message from your Subscription to " . $comma_seperated_list . ".<br>";
         echo '<div class="email">';
         echo '<div class="email__element"> Mail to: ' . $row[0] . '</div>';
         echo '<div class="email__element">Subject: ' . $subject . '</div>';
@@ -46,7 +52,7 @@ if ($emailList->num_rows !== 0) {
         $messagePrefix = " ";
     }
 } else {
-    echo "<p>Für den Vereien: " . $club . " gibt es keine aktiven Subscriptions!</p>";
+    echo "<p>Für den Vereien: " . $comma_seperated_list . " gibt es keine aktiven Subscriptions!</p>";
 }
 ?>
 </body>

@@ -104,7 +104,7 @@ if ($existingClubs !== $existingClubs_default && $newClub === $newClub_default) 
     <div class="button" onclick="toggleTable()" action="toggleTable">Ergebnisse anzeigen!</div>
     <?php
     if ($querySuccess) {
-        $tableQuery = "SELECT Name, Stimmen FROM vereine";
+        $tableQuery = "SELECT Name, Stimmen,  (Stimmen / $sumVotes  * 100) AS Result FROM vereine";
 
         mysqli_query($conn, "SET NAMES 'utf8'");
         $tableResult = mysqli_query($conn, $tableQuery);
@@ -122,8 +122,6 @@ if ($existingClubs !== $existingClubs_default && $newClub === $newClub_default) 
                 for($i = 0; $i <  mysqli_num_fields($tableResult); $i++){
                     echo "<td>$row[$i]</td>";
                 }
-                $percentage = number_format(($row[1] / $sumVotes) * 100, 2, '.', ' ');
-                echo "<td>$percentage%</td>";
                 echo '</tr>';
             }
             echo '</table>';
