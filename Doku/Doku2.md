@@ -52,6 +52,11 @@ create or replace TYPE KUNDET2 AS OBJECT
 );```
 
 ```sql
+create or replace TYPE KONTOLISTET2
+AS TABLE OF  KONTOT;
+```
+
+```sql
 create or replace TYPE zweigstellet2 AS OBJECT (
     name      VARCHAR2(20),
     adresse   VARCHAR2(50),
@@ -76,14 +81,24 @@ Create Table Kunde of KUNDET
 ```sql
 Create Table Zweigstelle of Zweigstellet
 NESTED TABLE kontos
-STORE AS KONTOS_ZW_NT;
-```
+STORE AS KONTOS_ZW_NT;```
 
 ```sql
-Create Table Konto of Kontot;
+Create Table Konto of Kontot;```
+
+
+```sql
+Create Table ZWEIGSTELLE2 of ZWEIGSTELLET2
+NESTED Table kontos
+STORE as kontos_zweigstelle2_nt;```
+
+```sql
+Create Table KUNDE2 of KUNDET2
+NESTED Table kontoNr
+STORE as kontoNr_nt;
 ```
 
-Konots anlegen
+Kontos anlegen
 ```sql
 INSERT INTO KONTO VALUES(987654, 789.65, 'G');
 INSERT INTO KONTO VALUES(745363, -23.67, 'S');
@@ -95,6 +110,15 @@ KONTOLISTET((SELECT REF(k)FROM KONTO k WHERE k.nummer = 745363), (SELECT REF(k)F
 
 INSERT INTO KUNDE VALUES (7654, 'B.Meier', 'Eschenweg 12', 'Privatkunde',
 KONTOLISTET((SELECT REF(k)FROM KONTO k WHERE k.nummer = 987654)));
+
+Insert into KUNDE2 Values (
+2345,'H. Fach','Münchenerstrasse 33','Geschäftskunde',KONTONRLIST(120768,348973));
+
+Insert into KUNDE2 Values (
+7654,'B. Meier','Eschenweg 12','Privatkunde',KONTONRLIST(987654));
+
+Insert into KUNDE2 Values (
+8764,'J. Wiesner','Schellingstrasse 42','Geschäftskunde',KONTONRLIST(745363,678453,348973));
 ```
 
 Zweigstellen anlegen
@@ -109,6 +133,12 @@ INSERT INTO ZWEIGSTELLE VALUES ('Riedering', 'Simseestr.3', 9823,
 KONTOLISTET(
 (SELECT REF(k)FROM KONTO k WHERE k.nummer = 987654),
 (SELECT REF(k)FROM KONTO k WHERE k.nummer = 745363)));
+
+Insert into ZWEIGSTELLE2 Values (
+'Bachdorf','Hochstrasse 1','1768', KONTOLISTET2(KONTOT(120768,234.56,'S'),KONTOT(678453,-456.78,'G'),KONTOT(348973,12567.56,'G')));
+
+Insert into ZWEIGSTELLE2 Values (
+'Riedering','Simseestrasse 3','9823', KONTOLISTET2(KONTOT(987654,789.65,'G'),KONTOT(745363,-23.67,'S')));
 ```
 ### Aufgabe 4.
 
@@ -118,6 +148,12 @@ SELECT DEREF(k.COLUMN_VALUE).Nummer AS Kontonummer,DEREF(k.COLUMN_VALUE).Stand A
 FROM ZWEIGSTELLE zw, TABLE(zw.Kontos) k;
 ```
 ![alt text](4a_1_Möglichkeit.png)
+
+```sql
+SELECT z.adresse, k.nummer, k.stand, k.art FROM ZWEIGSTELLE2 z, TABLE(z.kontos) k;
+```
+![alt text](4_a_2.png)
+
 Select statement b)
 ```sql
 SELECT DEREF(kundenKonto.COLUMN_VALUE).Nummer, Kunde.ADRESSE
@@ -125,6 +161,11 @@ FROM Kunde, TABLE(Kunde.Kontos) kundenKonto;
 
 ```
 ![alt text](4b_1_Möglichkeit.png)
+
+```sql
+SELECT k.adresse, (n.COLUMN_VALUE) FROM KUNDE2 k, TABLE(k.kontoNr) n;
+```
+![alt text](4_b_2.png)
 
 ### Aufgabe 5.
 
@@ -136,6 +177,13 @@ create or replace TYPE Casual_T UNDER EMPLOYEE_T
     hourly_wage int
 );
 ```
+
+```sql
+create or replace type comp_type_t as Object (
+	type_desc varchar2(50)
+)not final;
+```
+
 ```sql
 create or replace type comp_type_1_T under comp_type_T (
 	area varchar2(20)
@@ -149,11 +197,8 @@ create or replace type comp_type_2_T under comp_type_T (
 ```
 
 ```sql
-create or replace type comp_type_t as Object (
-	type_desc varchar2(50)
-)not final;
+create or replace type phone_list_T as Table of varchar2(20);
 ```
-
 
 ```sql
 create or replace type Company_T as Object (
@@ -187,11 +232,13 @@ create or replace TYPE DEPARTMENT_T AS OBJECT
 ```
 
 ```sql
-create or replace type Director_T as Object (
-	manag_ID int,
-	dir_bonus varchar2(10)
+create type available_in_t as Object (
+	item_ID varchar2(20),
+	store_ID varchar2(20),
+	item_stock float
 );
 ```
+
 ```sql
 create or replace TYPE EMPLOYEE_T AS OBJECT
 (
@@ -235,6 +282,21 @@ create or replace type Maker_T as Object (
 ```
 
 ```sql
+create or replace type Manager_T as Object (
+	manag_ID int,
+	manag_type varchar2(20),
+	yearly_salary float
+);
+```
+
+```sql
+create or replace type Director_T as Object (
+	manag_ID int,
+	dir_bonus varchar2(10)
+);
+```
+
+```sql
 create or replace type Management_T as Object (
 	manag_ID int,
 	manag_name varchar2(40),
@@ -243,13 +305,6 @@ create or replace type Management_T as Object (
 	comp_ID int,
 	manager_ ref Manager_T,
 	director_ ref Director_T
-);
-```
-```sql
-create or replace type Manager_T as Object (
-	manag_ID int,
-	manag_type varchar2(20),
-	yearly_salary float
 );
 ```
 
@@ -306,6 +361,26 @@ CREATE TABLE EMPLOYEE OF EMPLOYEE_T;
 CREATE TABLE ITEM OF ITEM_T;
 
 CREATE TABLE DEPRTMENT OF DEPARTMENT_T;
+
+create table maker of Maker_T;
+
+create table Director of Director_T;
+
+create table Manager of Manager_T;
+
+create table Management of Management_T;
+
+create table own_shares of own_shares_T;
+
+create table Company of COMPANY_T
+nested table comp_phone_list
+store as comp_phone_list_nt
+
+create table Shareholder of SHAREHOLDER_T;
+
+create table Store of STORE_T;
+
+create table Available_in of AVAILABLE_IN_T;
 ```
 #### Insert Statements
 
@@ -374,5 +449,107 @@ INSERT INTO DEPARTMENT VALUES(
     '2',
     'Bakery',
     'Charlie Williams'
+);
+```
+
+```sql
+insert into OWN_SHARES Values (
+100, 1, 1000
+);
+insert into OWN_SHARES Values (
+100, 2, 250
+);
+insert into OWN_SHARES Values (
+200, 1, 2500
+);
+```
+
+```sql
+insert into SHAREHOLDER Values (
+100, 'Judith Maxwell', '40 Pinnacles Rd Melbourne 3000', '03934502093'
+);
+insert into SHAREHOLDER Values (
+200, 'Ian Hobbes', '2 Red Oak Ave Hobart 7000', '0362231658'
+);
+```
+
+```sql
+insert into MAKER Values (
+'M1', 'Smiths', '15 Princess Hwy Sydney 2000', '1800157856'
+);
+insert into MAKER Values (
+'M2', 'Homemade', '450 Light Ave Albury 2780', '0245245263'
+);
+```
+
+```sql
+insert into DIRECTOR Values (
+1001, '5%'
+);
+insert into DIRECTOR Values (
+1002, '10%'
+);
+```
+
+```sql
+insert into MANAGER Values (
+1001, 'Information System', 100000
+);
+insert into MANAGER Values (
+1003, 'Operational', 85000
+);
+```
+
+```sql
+insert into MANAGEMENT Values (
+1001, 'Kumio Takahashi', '20 Avondale Cr. Darlinghurst 2010', '0296101024',
+1, (Select ref(m) From MANAGER m Where manag_ID = 1001),
+(Select ref(d) From DIRECTOR d Where manag_ID = 1001)
+);
+insert into MANAGEMENT Values (
+1002, 'Lucia Zanetti', '5 Noel St Double Bay 2028', '0290125846',
+1, (Select ref(m) From MANAGER m Where manag_ID = 1002),
+(Select ref(d) From DIRECTOR d Where manag_ID = 1002)
+);
+insert into MANAGEMENT Values (
+1003, 'Stanley Mann', '2/2 Ross St Masot 2020', '0295211110',
+1, (Select ref(m) From MANAGER m Where manag_ID = 1003),
+(Select ref(d) From DIRECTOR d Where manag_ID = 1003)
+);
+```
+
+```sql
+insert into COMPANY Values (
+1, 'OZ Buyer', '20 Russel St Sydney 2000', PHONE_LIST_T('0298394000','0298394005', '1800489000'), '0298398371', COMP_TYPE_1_T('Food and Daily Goods', 'NSW ACT')
+);
+insert into COMPANY Values (
+2, 'Goodies', '50 Collins St', PHONE_LIST_T('0394255000','0394355005', '18009000000'), '0394250005', COMP_TYPE_1_T('Food  Daily Goods', 'VIC SA TAS')
+);
+```
+
+```sql
+insert into STORE Values (
+'OB1', 'Parmatta', '4 Victoria Rd Paramatta 2797', '0298545876', 1,
+'Alice Green'
+);
+insert into STORE Values (
+'OB2', 'Newcastle', '15 University Dv Callaghan 2308', '024589 5444', 1,
+'Rob Hayes'
+);
+insert into STORE Values (
+'H1', 'Wollongong', '5 Princess Hwy Woll. 2500', '024256 8751', 4,
+'Elda Stiebel'
+);
+```
+
+```sql
+insert into AVAILABLE_IN Values (
+'I-1001', 'OB1', 5000
+);
+insert into AVAILABLE_IN Values (
+'I-1002', 'OB1', 5000
+);
+insert into AVAILABLE_IN Values (
+'I-1051', 'OB1', 200
 );
 ```
