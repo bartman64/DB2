@@ -61,3 +61,32 @@ Jahreseinkommen number,
 PRIMARY KEY(Personalnr)
 );
 ```
+
+```sql
+CREATE TABLE BERUFSCODES_3
+(
+    BERUFSBEZEICHNUNG varchar2(255),
+    CODE varchar2(255),
+    PRIMARY KEY (CODE)
+);
+```
+
+```sql
+CREATE TABLE VORNAME_TO_GENDER_3
+(
+    Vorname varchar2(255),
+    gender number,
+    PRIMARY KEY (Vorname)
+);
+```
+
+
+```sql
+CREATE TABLE KEY_ZUORDNUNG_3
+(
+    oldKey varchar2(255),
+    "SOURCE" varchar2(255),
+    newkey number,
+    PRIMARY KEY (oldKey)
+);
+```
