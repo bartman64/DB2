@@ -13,7 +13,8 @@ create or replace TYPE KONTOT AS OBJECT
   Nummer integer,
   Stand float,
   Art varchar2(1)
-);```
+);
+```
 
 ```sql
 create or replace TYPE KUNDET AS OBJECT
@@ -23,11 +24,13 @@ create or replace TYPE KUNDET AS OBJECT
     Adresse varchar2(50),
     Status varchar2(20),
     kontos Kontolistet
-); ```
+);
+```
 
 ```sql
 create or replace TYPE KONTOLISTET
-AS TABLE OF ref KONTOT;```
+AS TABLE OF ref KONTOT;
+```
 
 ```sql
 create or replace TYPE ZWEIGSTELLET AS OBJECT
@@ -36,7 +39,8 @@ create or replace TYPE ZWEIGSTELLET AS OBJECT
     adresse varchar2(50),
     leiter varchar2(20),
     kontos kontolistet
-);```
+);
+```
 
 #### 2.Möglichkeit
 
@@ -49,11 +53,15 @@ create or replace TYPE KUNDET2 AS OBJECT
     Adresse varchar2(50),
     Status varchar2(20),
     kontoNr kontoNrList
-);```
+);
+```
 
 ```sql
 create or replace TYPE KONTOLISTET2
 AS TABLE OF  KONTOT;
+```
+```sql
+create or replace TYPE kontoNrList AS Table of int;
 ```
 
 ```sql
@@ -62,12 +70,8 @@ create or replace TYPE zweigstellet2 AS OBJECT (
     adresse   VARCHAR2(50),
     leiter    VARCHAR2(20),
     kontos    kontolistet2
-);```
-
-
-```sql
-create or replace TYPE
-   kontoNrList AS Table of int;```
+);
+```
 
 
 ### Aufgabe 3.
@@ -76,21 +80,26 @@ create or replace TYPE
 Create Table Kunde of KUNDET
   NESTED TABLE kontos
   STORE AS KONTOS_NT;
+
 ```
 
 ```sql
 Create Table Zweigstelle of Zweigstellet
 NESTED TABLE kontos
-STORE AS KONTOS_ZW_NT;```
+STORE AS KONTOS_ZW_NT;
+
+```
 
 ```sql
-Create Table Konto of Kontot;```
+Create Table Konto of Kontot;
+```
 
 
 ```sql
 Create Table ZWEIGSTELLE2 of ZWEIGSTELLET2
 NESTED Table kontos
-STORE as kontos_zweigstelle2_nt;```
+STORE as kontos_zweigstelle2_nt;
+```
 
 ```sql
 Create Table KUNDE2 of KUNDET2
@@ -105,20 +114,32 @@ INSERT INTO KONTO VALUES(745363, -23.67, 'S');
 ```
 Kunden anlegen
 ```sql
-INSERT INTO KUNDE VALUES (8765, 'J.Wiesner', 'Schellingstr.42', 'Geschäftskunde',
-KONTOLISTET((SELECT REF(k)FROM KONTO k WHERE k.nummer = 745363), (SELECT REF(k)FROM KONTO k WHERE k.nummer = 678453), (SELECT REF(k)FROM KONTO k WHERE k.nummer = 348973)));
+INSERT INTO KUNDE VALUES (8765, 'J.Wiesner',
+  'Schellingstr.42', 'Geschäftskunde',
+KONTOLISTET(
+  (SELECT REF(k)FROM KONTO k WHERE k.nummer = 745363),
+  (SELECT REF(k)FROM KONTO k WHERE k.nummer = 678453),
+  (SELECT REF(k)FROM KONTO k WHERE k.nummer = 348973)));
 
-INSERT INTO KUNDE VALUES (7654, 'B.Meier', 'Eschenweg 12', 'Privatkunde',
-KONTOLISTET((SELECT REF(k)FROM KONTO k WHERE k.nummer = 987654)));
+INSERT INTO KUNDE VALUES (7654, 'B.Meier',
+  'Eschenweg 12',
+  'Privatkunde',
+KONTOLISTET(
+  (SELECT REF(k)FROM KONTO k WHERE k.nummer = 987654)));
 
 Insert into KUNDE2 Values (
-2345,'H. Fach','Münchenerstrasse 33','Geschäftskunde',KONTONRLIST(120768,348973));
+2345,'H. Fach','Münchenerstrasse 33',
+'Geschäftskunde',
+KONTONRLIST(120768,348973));
 
 Insert into KUNDE2 Values (
-7654,'B. Meier','Eschenweg 12','Privatkunde',KONTONRLIST(987654));
+7654,'B. Meier','Eschenweg 12',
+'Privatkunde',
+KONTONRLIST(987654));
 
 Insert into KUNDE2 Values (
-8764,'J. Wiesner','Schellingstrasse 42','Geschäftskunde',KONTONRLIST(745363,678453,348973));
+8764,'J. Wiesner','Schellingstrasse 42',
+'Geschäftskunde',KONTONRLIST(745363,678453,348973));
 ```
 
 Zweigstellen anlegen
@@ -135,22 +156,31 @@ KONTOLISTET(
 (SELECT REF(k)FROM KONTO k WHERE k.nummer = 745363)));
 
 Insert into ZWEIGSTELLE2 Values (
-'Bachdorf','Hochstrasse 1','1768', KONTOLISTET2(KONTOT(120768,234.56,'S'),KONTOT(678453,-456.78,'G'),KONTOT(348973,12567.56,'G')));
+'Bachdorf','Hochstrasse 1','1768',
+KONTOLISTET2(KONTOT(120768,234.56,'S'),
+KONTOT(678453,-456.78,'G'),
+KONTOT(348973,12567.56,'G')));
 
 Insert into ZWEIGSTELLE2 Values (
-'Riedering','Simseestrasse 3','9823', KONTOLISTET2(KONTOT(987654,789.65,'G'),KONTOT(745363,-23.67,'S')));
+'Riedering','Simseestrasse 3','9823',
+KONTOLISTET2(KONTOT(987654,789.65,'G'),
+KONTOT(745363,-23.67,'S')));
 ```
 ### Aufgabe 4.
 
 Select statement a)
 ```sql
-SELECT DEREF(k.COLUMN_VALUE).Nummer AS Kontonummer,DEREF(k.COLUMN_VALUE).Stand AS Kontostand, DEREF(k.COLUMN_VALUE).Art AS Kontoart ,  zw.ADRESSE
+SELECT
+DEREF(k.COLUMN_VALUE).Nummer AS Kontonummer,
+DEREF(k.COLUMN_VALUE).Stand AS Kontostand,
+DEREF(k.COLUMN_VALUE).Art AS Kontoart ,  zw.ADRESSE
 FROM ZWEIGSTELLE zw, TABLE(zw.Kontos) k;
 ```
 ![alt text](4a_1_Möglichkeit.png)
 
 ```sql
-SELECT z.adresse, k.nummer, k.stand, k.art FROM ZWEIGSTELLE2 z, TABLE(z.kontos) k;
+SELECT z.adresse, k.nummer, k.stand, k.art
+FROM ZWEIGSTELLE2 z, TABLE(z.kontos) k;
 ```
 ![alt text](4_a_2.png)
 
@@ -394,6 +424,7 @@ INSERT INTO CUSTOMER VALUES(
 DATE '1970-03-12',
 );
 ```
+
 ```sql
 
 INSERT INTO EMPLOYEE VALUES (FULL_TIME_T(
@@ -475,10 +506,14 @@ insert into SHAREHOLDER Values (
 
 ```sql
 insert into MAKER Values (
-'M1', 'Smiths', '15 Princess Hwy Sydney 2000', '1800157856'
+'M1', 'Smiths',
+'15 Princess Hwy Sydney 2000',
+'1800157856'
 );
 insert into MAKER Values (
-'M2', 'Homemade', '450 Light Ave Albury 2780', '0245245263'
+'M2', 'Homemade',
+'450 Light Ave Albury 2780',
+'0245245263'
 );
 ```
 
@@ -520,20 +555,28 @@ insert into MANAGEMENT Values (
 
 ```sql
 insert into COMPANY Values (
-1, 'OZ Buyer', '20 Russel St Sydney 2000', PHONE_LIST_T('0298394000','0298394005', '1800489000'), '0298398371', COMP_TYPE_1_T('Food and Daily Goods', 'NSW ACT')
+1, 'OZ Buyer', '20 Russel St Sydney 2000',
+PHONE_LIST_T('0298394000','0298394005', '1800489000'),
+'0298398371', COMP_TYPE_1_T('Food and Daily Goods', 'NSW ACT')
 );
 insert into COMPANY Values (
-2, 'Goodies', '50 Collins St', PHONE_LIST_T('0394255000','0394355005', '18009000000'), '0394250005', COMP_TYPE_1_T('Food  Daily Goods', 'VIC SA TAS')
+2, 'Goodies', '50 Collins St',
+PHONE_LIST_T('0394255000','0394355005', '18009000000'),
+'0394250005', COMP_TYPE_1_T('Food  Daily Goods', 'VIC SA TAS')
 );
 ```
 
 ```sql
 insert into STORE Values (
-'OB1', 'Parmatta', '4 Victoria Rd Paramatta 2797', '0298545876', 1,
+'OB1', 'Parmatta',
+'4 Victoria Rd Paramatta 2797',
+'0298545876', 1,
 'Alice Green'
 );
 insert into STORE Values (
-'OB2', 'Newcastle', '15 University Dv Callaghan 2308', '024589 5444', 1,
+'OB2', 'Newcastle',
+'15 University Dv Callaghan 2308',
+'024589 5444', 1,
 'Rob Hayes'
 );
 insert into STORE Values (
