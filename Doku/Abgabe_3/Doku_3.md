@@ -189,7 +189,10 @@ create or replace FUNCTION CONVERT_TO_BERUFSCODE
 code_result number;
 
 BEGIN
-    SELECT BERUFSCODES_3.CODE INTO code_result FROM BERUFSCODES_3 WHERE BERUFSCODES_3.BERUFSBEZEICHNUNG = UPPER(Bezeichnung);
+    SELECT BERUFSCODES_3.CODE
+    INTO code_result
+    FROM BERUFSCODES_3
+    WHERE BERUFSCODES_3.BERUFSBEZEICHNUNG = UPPER(Bezeichnung);
   RETURN code_result;
 END CONVERT_TO_BERUFSCODE;
 ```
@@ -263,7 +266,9 @@ BEGIN
   RETURN 40 * 4 * HOUR_INCOME;
 END CALC_MONTH_INCOME;
 ```
-Berechnet das Alter vom Arbeiter. Wenn der aktuelle Monat mit dem geburtsmonat übereinstimmt, zählt es noch nicht als ein Jahr älter.
+Berechnet das Alter vom Arbeiter.
+Wenn der aktuelle Monat mit dem geburtsmonat übereinstimmt,
+zählt es noch nicht als ein Jahr älter.
 ```sql
 create or replace FUNCTION CALC_AGE_WORKER
 (
