@@ -94,6 +94,38 @@ CREATE TABLE KEY_ZUORDNUNG_3
     PRIMARY KEY (oldKey)
 );
 ```
+##### Dummydaten
+```sql
+
+Insert into ARBEITER_3 Values (
+'Müller', 'Alex', '05.95', 12.50
+);
+Insert into ARBEITER_3 Values (
+'Hecht', 'Daniel', '10.99', 15.00
+);
+Insert into ARBEITER_3 Values (
+'Hartmann', 'Lukas', '02.93', 10
+);
+Insert into ARBEITER_3 Values (
+'Brida', 'Sophie', '08.90', 17.23
+);
+Insert into ARBEITER_3 Values (
+'Spitz', 'Anna', '01.97', 12
+);
+
+Insert into ANGESTELLTER_3 Values (
+'Peter Pan', Date '1994-04-23', 'Arbeiter', 1500, 'männlich', 12345
+);
+Insert into ANGESTELLTER_3 Values (
+'Rudi,Rabauke', Date '1996-02-28', 'Arbeiter', 1700, 'männlich', 6754934
+);
+Insert into ANGESTELLTER_3 Values (
+'Gundula Gause', Date '1990-07-01', 'Manager', 3000, 'weiblich', 0928374
+);
+Insert into ANGESTELLTER_3 Values (
+'Sandra,Wagner', Date '1997-12-24', 'Arbeiter', 1200, 'weiblich', 432657
+);
+```
 
 ##### Funktionen
 
