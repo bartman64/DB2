@@ -58,11 +58,11 @@ Insert into ANGESTELLTER_3 Values (
 'Peter Pan', Date '1994-04-23', 'Arbeiter', 1500, 'männlich', 12345
 );
 Insert into ANGESTELLTER_3 Values (
-'Rudi,Rabauke', Date '1996-02-28', 'Arbeiter', 1700, 'männlich', 6754934
+'Rudi, Rabauke', Date '1996-02-28', 'Arbeiter', 1700, 'männlich', 6754934
 );
 Insert into ANGESTELLTER_3 Values (
 'Gundula Gause', Date '1990-07-01', 'Manager', 3000, 'weiblich', 0928374
 );
 Insert into ANGESTELLTER_3 Values (
-'Sandra,Wagner', Date '1997-12-24', 'Arbeiter', 1200, 'weiblich', 432657
+'Sandra, Wagner', Date '1997-12-24', 'Arbeiter', 1200, 'weiblich', 432657
 );
